@@ -6,51 +6,86 @@
 #include <errno.h>
 #include <string.h>
 
-void listInputDevices() {
-    printf("Input devices:\n");
-    system("");
-}
+void enable_keyboard(const char *);
+void disable_keyboard(const char *);
+void list_input_devices();
 
-int main(int argc, char *argv[]) {
-    if (argc != 2 ) {
+int main(int argc, char *argv[])
+{
+    if (argc > 3 ||
+        (strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-ls") != 0))
+    {
         printf("Usage:\n");
-        printf("%s -ls: List input devices using evtest\n", argv[0]);
-        printf("%s /dev/input/eventX: Disable and re-enable a specific input device\n", argv[0]);
+        printf("%s -d /dev/input/eventX: Disable keyboard\n", argv[0]);
+        printf("%s -e /dev/input/eventX: Enable keyboard\n", argv[0]);
+        printf("%s -ls: List input devices\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    if (strcmp(argv[1], "-ls") == 0) {
-        listInputDevices();
+    const char *flag = argv[1];
+    const char *device = argv[2];
+
+    if (strcmp(flag, "-ls") == 0)
+    {
+        list_input_devices();
         return EXIT_SUCCESS;
     }
+    else if (strcmp(flag, "-d") == 0)
+    {
+        disable_keyboard(device);
+        return EXIT_SUCCESS;
+    }
+    else if (strcmp(flag, "-e") == 0)
+    {
+        enable_keyboard(device);
+        return EXIT_SUCCESS;
+    }
+}
 
-    const char *keyboard_device = argv[1];
-
-    int keyboard_fd = open(keyboard_device, O_RDONLY);
-    if (keyboard_fd == -1) {
+void disable_keyboard(const char *device)
+{
+    int keyboard_fd = open(device, O_RDONLY);
+    if (keyboard_fd == -1)
+    {
         perror("Error opening keyboard device");
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
-    int result = ioctl(keyboard_fd, EVIOCGRAB, 1); 
-    if (result == -1) {
+    int result = ioctl(keyboard_fd, EVIOCGRAB, 1);
+    if (result == -1)
+    {
         perror("Error disabling keyboard");
         close(keyboard_fd);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
-    printf("Keyboard disabled. Press any key to re-enable.\n");
-    getchar(); 
+    printf("Keyboard disabled.\n");
+    close(keyboard_fd);
+}
 
-    result = ioctl(keyboard_fd, EVIOCGRAB, 0); 
-    if (result == -1) {
+void enable_keyboard(const char *device)
+{
+    int keyboard_fd = open(device, O_RDONLY);
+    if (keyboard_fd == -1)
+    {
+        perror("Error opening keyboard device");
+        exit(EXIT_FAILURE);
+    }
+
+    int result = ioctl(keyboard_fd, EVIOCGRAB, 0);
+    if (result == -1)
+    {
         perror("Error enabling keyboard");
         close(keyboard_fd);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
+    printf("Keyboard enabled.\n");
     close(keyboard_fd);
-    printf("Keyboard re-enabled.\n");
+}
 
-    return EXIT_SUCCESS;
+void list_input_devices()
+{
+    printf("Input devices:\n");
+    system("");
 }
