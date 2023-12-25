@@ -12,7 +12,7 @@ void list_input_devices();
 
 int main(int argc, char *argv[])
 {
-    if (argc > 3 ||
+    if (argc == 1 || argc > 3 ||
         (strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-ls") != 0))
     {
         printf("Usage:\n");
@@ -33,17 +33,23 @@ int main(int argc, char *argv[])
     else if (strcmp(flag, "-d") == 0)
     {
         disable_keyboard(device);
-        return EXIT_SUCCESS;
     }
     else if (strcmp(flag, "-e") == 0)
     {
         enable_keyboard(device);
-        return EXIT_SUCCESS;
     }
+
+    return EXIT_SUCCESS;
 }
 
 void disable_keyboard(const char *device)
 {
+    if (device == NULL)
+    {
+        printf("\nEmpty device, give a device name");
+        exit(EXIT_FAILURE);
+    }
+
     int keyboard_fd = open(device, O_RDONLY);
     if (keyboard_fd == -1)
     {
@@ -59,8 +65,18 @@ void disable_keyboard(const char *device)
         exit(EXIT_FAILURE);
     }
 
-    printf("Keyboard disabled.\n");
-    close(keyboard_fd);
+    printf("Keyboard disabled using pid: %d\n", getpid());
+    // close(keyboard_fd);
+
+    if (daemon(0, 0))
+    {
+        perror("this daemon don't work!!");
+        exit(EXIT_FAILURE);
+    }
+    while (1)
+    {
+        sleep(60);
+    }
 }
 
 void enable_keyboard(const char *device)
