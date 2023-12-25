@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 
-void store_pid(char*, pid_t);
-pid_t retrieve_pid(char *);
+void store_pid(const char *, pid_t);
+pid_t retrieve_pid(const char *);
 
 #endif

@@ -6,6 +6,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include "pid_mng.h"
+
 void enable_keyboard(const char *);
 void disable_keyboard(const char *);
 void list_input_devices();
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
 
 void disable_keyboard(const char *device)
 {
+    pid_t pid = getpid();
     if (device == NULL)
     {
         printf("\nEmpty device, give a device name");
@@ -64,6 +67,8 @@ void disable_keyboard(const char *device)
         close(keyboard_fd);
         exit(EXIT_FAILURE);
     }
+    
+    store_pid(device, pid);
 
     printf("Keyboard disabled using pid: %d\n", getpid());
     // close(keyboard_fd);
