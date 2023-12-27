@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "pid_mng.h"
+#include "utils.h"
 
 void enable_keyboard(const char *);
 void disable_keyboard(const char *);
@@ -103,10 +104,4 @@ void enable_keyboard(const char *device)
 
     printf("Keyboard enabled.\n");
     close(keyboard_fd);
-}
-
-void list_input_devices()
-{
-    printf("Input devices:\n");
-    system("");
 }
