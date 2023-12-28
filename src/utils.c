@@ -5,6 +5,9 @@
 #include <syslog.h>
 #include <errno.h>
 
+/**
+ * \brief list the input devices
+ */
 void list_input_devices() {
     DIR *dir;
     struct dirent *entry;
@@ -69,5 +72,21 @@ char* read_conf_file(int reload, char *app_name, char *conf_file_name)
 	fclose(conf_file);
 
 	return device_name;
+}
+
+/**
+ * \brief Print help section
+ */
+void print_help(char* app_name)
+{
+	printf("\n Usage: %s [OPTIONS]\n\n", app_name);
+	printf("  Options:\n");
+	printf("   -h --help                 Print this help\n");
+	printf("   -c --conf_file filename   Set configuration file\n");
+	printf("   -t --test_conf filename   Test configuration file\n");
+	printf("   -l --log_file  filename   Set log file\n");
+	printf("   -d --daemon               Start daemon\n");
+	printf("   -p --pid_file  filename   set custom PID file\n");
+	printf("\n");
 }
 
