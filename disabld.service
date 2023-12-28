@@ -1,0 +1,12 @@
+[Unit]
+Description=Disable or enable input devices
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/disabld \
+	--conf_file /etc/disabld/disabld.conf \
+	--log_file /var/log/disabld/disabld.log
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
