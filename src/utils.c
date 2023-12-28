@@ -36,10 +36,11 @@ void list_input_devices() {
 /**
  * \brief Read configuration from config file
  */
-int read_conf_file(int reload, char *app_name, char *conf_file_name)
+char* read_conf_file(int reload, char *app_name, char *conf_file_name)
 {
 	FILE *conf_file = NULL;
-	int ret = -1, delay;
+	int ret = -1;
+    char * device_name;
 
 	if (conf_file_name == NULL) return 0;
 
@@ -51,7 +52,7 @@ int read_conf_file(int reload, char *app_name, char *conf_file_name)
 		return -1;
 	}
 
-	ret = fscanf(conf_file, "%d", &delay);
+	ret = fscanf(conf_file, "%s", device_name);
 
 	if (ret > 0) {
 		if (reload == 1) {
@@ -67,6 +68,6 @@ int read_conf_file(int reload, char *app_name, char *conf_file_name)
 
 	fclose(conf_file);
 
-	return ret;
+	return device_name;
 }
 
